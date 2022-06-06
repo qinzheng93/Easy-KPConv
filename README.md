@@ -17,9 +17,41 @@ To use KPConv in more complicated networks, we build this repo with the followin
    2. `q_points`: coordinates of the query points.
    3. `s_points`: coordinates of the support points.
    4. `neighbor_indices`: the indices of the neighbors for the query points.
-3. [Group normalization](https://arxiv.org/abs/1803.08494) is used by default instead of [batch normalization](https://arxiv.org/abs/1502.03167). As point clouds are stacked in KPConv, BN is hard to implement. For this reason, we use GN instead.
+3. Optional normalization with a simple argument: `None`, `BatchNorm`, `InstanceNorm`, `GroupNorm` and `LayerNorm`.
+4. Optional activation with a simple argument: `None`, `ReLU`, `LeakyReLU`, `ELU`, `GELU`, `Sigmoid`, `Softplus`, `Tanh`, `Identity`.
 
-More examples will be provided in the future.
+## Installation
+
+Use the following command for installation:
+
+```bash
+python setup.py develop
+```
+
+## Example: S3DIS Scene Segmentation
+
+We provide an example on S3DIS scene segmentation task in `examples/scene_segmentation`.
+
+### 1. Install dependencies
+
+We use [Vision3d-Engine](https://github.com/qinzheng93/vision3d-engine) for training and testing. Refer to [Vision3d-Engine](https://github.com/qinzheng93/vision3d-engine) for installation.
+
+### 2. Data preprocesing
+
+1. Download data from S3DIS official site.
+2. Run `examples/scene_segmentation/preprocess_s3dis.py` for data preprocessing.
+
+### 3. Training
+
+```batch
+python trainval.py --test_area=Area_5
+```
+
+### 4. Testing
+
+```batch
+python test.py --test_epoch=EPOCH_ID --test_area=Area_5
+```
 
 ## Acknowledgements
 

@@ -1,0 +1,95 @@
+2022-06-06 15:49:13 | INFO | Logs are saved to /workspace/Easy-KPConv/examples/scene_segmentation/outputs/logs/train-20220606-154913.log.
+2022-06-06 15:49:13 | INFO | Tensorboard is enabled. Write events to /workspace/Easy-KPConv/examples/scene_segmentation/outputs/events.
+2022-06-06 15:49:13 | INFO | Configs:
+{
+    "exp": {
+        "name": "scene_segmentation",
+        "working_dir": "/workspace/Easy-KPConv/examples/scene_segmentation",
+        "output_dir": "/workspace/Easy-KPConv/examples/scene_segmentation/outputs",
+        "checkpoint_dir": "/workspace/Easy-KPConv/examples/scene_segmentation/outputs/checkpoints",
+        "log_dir": "/workspace/Easy-KPConv/examples/scene_segmentation/outputs/logs",
+        "event_dir": "/workspace/Easy-KPConv/examples/scene_segmentation/outputs/events",
+        "seed": 7351
+    },
+    "data": {
+        "dataset_dir": "/data/S3DIS",
+        "num_classes": 13,
+        "class_names": [
+            "ceiling",
+            "floor",
+            "wall",
+            "beam",
+            "column",
+            "window",
+            "door",
+            "table",
+            "chair",
+            "sofa",
+            "bookcase",
+            "board",
+            "clutter"
+        ]
+    },
+    "train": {
+        "batch_size": 16,
+        "num_workers": 8,
+        "num_points": null,
+        "point_threshold": 1024,
+        "block_size": 2.5,
+        "use_normalized_location": false,
+        "use_z_coordinate": true,
+        "pad_points": false,
+        "augmentation_rotation_scale": 1.0,
+        "augmentation_min_scale": 0.9,
+        "augmentation_max_scale": 1.1,
+        "augmentation_noise_sigma": 0.01,
+        "augmentation_noise_scale": 0.05
+    },
+    "test": {
+        "batch_size": 8,
+        "num_workers": 0,
+        "num_points": null,
+        "point_threshold": 2048,
+        "block_size": 2.5,
+        "block_stride": 1.0,
+        "use_normalized_location": false,
+        "use_z_coordinate": true,
+        "pad_points": false
+    },
+    "trainer": {
+        "max_epoch": 300,
+        "num_iters_per_epoch": 3000,
+        "grad_acc_steps": 1
+    },
+    "optimizer": {
+        "type": "SGD",
+        "lr": 0.01,
+        "momentum": 0.9,
+        "weight_decay": 0.0001
+    },
+    "scheduler": {
+        "type": "Cosine",
+        "total_steps": 900000,
+        "warmup_steps": 3000,
+        "eta_init": 0.1,
+        "eta_min": 0.01
+    },
+    "model": {
+        "num_stages": 5,
+        "basic_voxel_size": 0.04,
+        "kernel_size": 15,
+        "kpconv_radius": 2.5,
+        "kpconv_sigma": 2.0,
+        "input_dim": 5,
+        "init_dim": 64,
+        "neighbor_limits": [
+            24,
+            40,
+            34,
+            35,
+            34
+        ]
+    },
+    "loss": {}
+}
+2022-06-06 15:49:13 | INFO | Using Single-GPU mode.

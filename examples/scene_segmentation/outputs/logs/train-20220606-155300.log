@@ -1,0 +1,402 @@
+2022-06-06 15:53:00 | INFO | Logs are saved to /workspace/Easy-KPConv/examples/scene_segmentation/outputs/logs/train-20220606-155300.log.
+2022-06-06 15:53:00 | INFO | Tensorboard is enabled. Write events to /workspace/Easy-KPConv/examples/scene_segmentation/outputs/events.
+2022-06-06 15:53:00 | INFO | Configs:
+{
+    "exp": {
+        "name": "scene_segmentation",
+        "working_dir": "/workspace/Easy-KPConv/examples/scene_segmentation",
+        "output_dir": "/workspace/Easy-KPConv/examples/scene_segmentation/outputs",
+        "checkpoint_dir": "/workspace/Easy-KPConv/examples/scene_segmentation/outputs/checkpoints",
+        "log_dir": "/workspace/Easy-KPConv/examples/scene_segmentation/outputs/logs",
+        "event_dir": "/workspace/Easy-KPConv/examples/scene_segmentation/outputs/events",
+        "seed": 7351
+    },
+    "data": {
+        "dataset_dir": "/data/S3DIS",
+        "num_classes": 13,
+        "class_names": [
+            "ceiling",
+            "floor",
+            "wall",
+            "beam",
+            "column",
+            "window",
+            "door",
+            "table",
+            "chair",
+            "sofa",
+            "bookcase",
+            "board",
+            "clutter"
+        ]
+    },
+    "train": {
+        "batch_size": 16,
+        "num_workers": 8,
+        "num_points": null,
+        "point_threshold": 1024,
+        "block_size": 2.5,
+        "use_normalized_location": false,
+        "use_z_coordinate": true,
+        "pad_points": false,
+        "augmentation_rotation_scale": 1.0,
+        "augmentation_min_scale": 0.9,
+        "augmentation_max_scale": 1.1,
+        "augmentation_noise_sigma": 0.01,
+        "augmentation_noise_scale": 0.05
+    },
+    "test": {
+        "batch_size": 8,
+        "num_workers": 0,
+        "num_points": null,
+        "point_threshold": 2048,
+        "block_size": 2.5,
+        "block_stride": 1.0,
+        "use_normalized_location": false,
+        "use_z_coordinate": true,
+        "pad_points": false
+    },
+    "trainer": {
+        "max_epoch": 300,
+        "num_iters_per_epoch": 3000,
+        "grad_acc_steps": 1
+    },
+    "optimizer": {
+        "type": "SGD",
+        "lr": 0.01,
+        "momentum": 0.9,
+        "weight_decay": 0.0001
+    },
+    "scheduler": {
+        "type": "Cosine",
+        "total_steps": 900000,
+        "warmup_steps": 3000,
+        "eta_init": 0.1,
+        "eta_min": 0.01
+    },
+    "model": {
+        "num_stages": 5,
+        "basic_voxel_size": 0.04,
+        "kernel_size": 15,
+        "kpconv_radius": 2.5,
+        "kpconv_sigma": 2.0,
+        "input_dim": 5,
+        "init_dim": 64,
+        "neighbor_limits": [
+            24,
+            40,
+            34,
+            35,
+            34
+        ]
+    },
+    "loss": {}
+}
+2022-06-06 15:53:00 | INFO | Using Single-GPU mode.
+2022-06-06 15:53:03 | INFO | Model description:
+KPFCNN(
+  (encoder1_1): KPConvBlock(
+    (conv): KPConv(kernel_size=15, in_channels=5, out_channels=64, radius=0.1, sigma=0.08, bias=True)
+    (norm): GroupNormPackMode(8, 64, eps=1e-05, affine=True)
+    (act): LeakyReLU(negative_slope=0.2)
+  )
+  (encoder1_2): KPResidualBlock(
+    (unary1): UnaryBlockPackMode(
+      (mlp): Linear(in_features=64, out_features=32, bias=True)
+      (norm): GroupNormPackMode(4, 32, eps=1e-05, affine=True)
+      (act): LeakyReLU(negative_slope=0.2)
+    )
+    (conv): KPConvBlock(
+      (conv): KPConv(kernel_size=15, in_channels=32, out_channels=32, radius=0.1, sigma=0.08, bias=True)
+      (norm): GroupNormPackMode(4, 32, eps=1e-05, affine=True)
+      (act): LeakyReLU(negative_slope=0.2)
+    )
+    (unary2): UnaryBlockPackMode(
+      (mlp): Linear(in_features=32, out_features=128, bias=True)
+      (norm): GroupNormPackMode(16, 128, eps=1e-05, affine=True)
+      (act): Identity()
+    )
+    (unary_shortcut): UnaryBlockPackMode(
+      (mlp): Linear(in_features=64, out_features=128, bias=True)
+      (norm): GroupNormPackMode(16, 128, eps=1e-05, affine=True)
+      (act): Identity()
+    )
+    (act): LeakyReLU(negative_slope=0.2)
+  )
+  (encoder2_1): KPResidualBlock(
+    (unary1): UnaryBlockPackMode(
+      (mlp): Linear(in_features=128, out_features=32, bias=True)
+      (norm): GroupNormPackMode(4, 32, eps=1e-05, affine=True)
+      (act): LeakyReLU(negative_slope=0.2)
+    )
+    (conv): KPConvBlock(
+      (conv): KPConv(kernel_size=15, in_channels=32, out_channels=32, radius=0.1, sigma=0.08, bias=True)
+      (norm): GroupNormPackMode(4, 32, eps=1e-05, affine=True)
+      (act): LeakyReLU(negative_slope=0.2)
+    )
+    (unary2): UnaryBlockPackMode(
+      (mlp): Linear(in_features=32, out_features=128, bias=True)
+      (norm): GroupNormPackMode(16, 128, eps=1e-05, affine=True)
+      (act): Identity()
+    )
+    (unary_shortcut): Identity()
+    (act): LeakyReLU(negative_slope=0.2)
+  )
+  (encoder2_2): KPResidualBlock(
+    (unary1): UnaryBlockPackMode(
+      (mlp): Linear(in_features=128, out_features=64, bias=True)
+      (norm): GroupNormPackMode(8, 64, eps=1e-05, affine=True)
+      (act): LeakyReLU(negative_slope=0.2)
+    )
+    (conv): KPConvBlock(
+      (conv): KPConv(kernel_size=15, in_channels=64, out_channels=64, radius=0.2, sigma=0.16, bias=True)
+      (norm): GroupNormPackMode(8, 64, eps=1e-05, affine=True)
+      (act): LeakyReLU(negative_slope=0.2)
+    )
+    (unary2): UnaryBlockPackMode(
+      (mlp): Linear(in_features=64, out_features=256, bias=True)
+      (norm): GroupNormPackMode(32, 256, eps=1e-05, affine=True)
+      (act): Identity()
+    )
+    (unary_shortcut): UnaryBlockPackMode(
+      (mlp): Linear(in_features=128, out_features=256, bias=True)
+      (norm): GroupNormPackMode(32, 256, eps=1e-05, affine=True)
+      (act): Identity()
+    )
+    (act): LeakyReLU(negative_slope=0.2)
+  )
+  (encoder2_3): KPResidualBlock(
+    (unary1): UnaryBlockPackMode(
+      (mlp): Linear(in_features=256, out_features=64, bias=True)
+      (norm): GroupNormPackMode(8, 64, eps=1e-05, affine=True)
+      (act): LeakyReLU(negative_slope=0.2)
+    )
+    (conv): KPConvBlock(
+      (conv): KPConv(kernel_size=15, in_channels=64, out_channels=64, radius=0.2, sigma=0.16, bias=True)
+      (norm): GroupNormPackMode(8, 64, eps=1e-05, affine=True)
+      (act): LeakyReLU(negative_slope=0.2)
+    )
+    (unary2): UnaryBlockPackMode(
+      (mlp): Linear(in_features=64, out_features=256, bias=True)
+      (norm): GroupNormPackMode(32, 256, eps=1e-05, affine=True)
+      (act): Identity()
+    )
+    (unary_shortcut): Identity()
+    (act): LeakyReLU(negative_slope=0.2)
+  )
+  (encoder3_1): KPResidualBlock(
+    (unary1): UnaryBlockPackMode(
+      (mlp): Linear(in_features=256, out_features=64, bias=True)
+      (norm): GroupNormPackMode(8, 64, eps=1e-05, affine=True)
+      (act): LeakyReLU(negative_slope=0.2)
+    )
+    (conv): KPConvBlock(
+      (conv): KPConv(kernel_size=15, in_channels=64, out_channels=64, radius=0.2, sigma=0.16, bias=True)
+      (norm): GroupNormPackMode(8, 64, eps=1e-05, affine=True)
+      (act): LeakyReLU(negative_slope=0.2)
+    )
+    (unary2): UnaryBlockPackMode(
+      (mlp): Linear(in_features=64, out_features=256, bias=True)
+      (norm): GroupNormPackMode(32, 256, eps=1e-05, affine=True)
+      (act): Identity()
+    )
+    (unary_shortcut): Identity()
+    (act): LeakyReLU(negative_slope=0.2)
+  )
+  (encoder3_2): KPResidualBlock(
+    (unary1): UnaryBlockPackMode(
+      (mlp): Linear(in_features=256, out_features=128, bias=True)
+      (norm): GroupNormPackMode(16, 128, eps=1e-05, affine=True)
+      (act): LeakyReLU(negative_slope=0.2)
+    )
+    (conv): KPConvBlock(
+      (conv): KPConv(kernel_size=15, in_channels=128, out_channels=128, radius=0.4, sigma=0.32, bias=True)
+      (norm): GroupNormPackMode(16, 128, eps=1e-05, affine=True)
+      (act): LeakyReLU(negative_slope=0.2)
+    )
+    (unary2): UnaryBlockPackMode(
+      (mlp): Linear(in_features=128, out_features=512, bias=True)
+      (norm): GroupNormPackMode(32, 512, eps=1e-05, affine=True)
+      (act): Identity()
+    )
+    (unary_shortcut): UnaryBlockPackMode(
+      (mlp): Linear(in_features=256, out_features=512, bias=True)
+      (norm): GroupNormPackMode(32, 512, eps=1e-05, affine=True)
+      (act): Identity()
+    )
+    (act): LeakyReLU(negative_slope=0.2)
+  )
+  (encoder3_3): KPResidualBlock(
+    (unary1): UnaryBlockPackMode(
+      (mlp): Linear(in_features=512, out_features=128, bias=True)
+      (norm): GroupNormPackMode(16, 128, eps=1e-05, affine=True)
+      (act): LeakyReLU(negative_slope=0.2)
+    )
+    (conv): KPConvBlock(
+      (conv): KPConv(kernel_size=15, in_channels=128, out_channels=128, radius=0.4, sigma=0.32, bias=True)
+      (norm): GroupNormPackMode(16, 128, eps=1e-05, affine=True)
+      (act): LeakyReLU(negative_slope=0.2)
+    )
+    (unary2): UnaryBlockPackMode(
+      (mlp): Linear(in_features=128, out_features=512, bias=True)
+      (norm): GroupNormPackMode(32, 512, eps=1e-05, affine=True)
+      (act): Identity()
+    )
+    (unary_shortcut): Identity()
+    (act): LeakyReLU(negative_slope=0.2)
+  )
+  (encoder4_1): KPResidualBlock(
+    (unary1): UnaryBlockPackMode(
+      (mlp): Linear(in_features=512, out_features=128, bias=True)
+      (norm): GroupNormPackMode(16, 128, eps=1e-05, affine=True)
+      (act): LeakyReLU(negative_slope=0.2)
+    )
+    (conv): KPConvBlock(
+      (conv): KPConv(kernel_size=15, in_channels=128, out_channels=128, radius=0.4, sigma=0.32, bias=True)
+      (norm): GroupNormPackMode(16, 128, eps=1e-05, affine=True)
+      (act): LeakyReLU(negative_slope=0.2)
+    )
+    (unary2): UnaryBlockPackMode(
+      (mlp): Linear(in_features=128, out_features=512, bias=True)
+      (norm): GroupNormPackMode(32, 512, eps=1e-05, affine=True)
+      (act): Identity()
+    )
+    (unary_shortcut): Identity()
+    (act): LeakyReLU(negative_slope=0.2)
+  )
+  (encoder4_2): KPResidualBlock(
+    (unary1): UnaryBlockPackMode(
+      (mlp): Linear(in_features=512, out_features=256, bias=True)
+      (norm): GroupNormPackMode(32, 256, eps=1e-05, affine=True)
+      (act): LeakyReLU(negative_slope=0.2)
+    )
+    (conv): KPConvBlock(
+      (conv): KPConv(kernel_size=15, in_channels=256, out_channels=256, radius=0.8, sigma=0.64, bias=True)
+      (norm): GroupNormPackMode(32, 256, eps=1e-05, affine=True)
+      (act): LeakyReLU(negative_slope=0.2)
+    )
+    (unary2): UnaryBlockPackMode(
+      (mlp): Linear(in_features=256, out_features=1024, bias=True)
+      (norm): GroupNormPackMode(32, 1024, eps=1e-05, affine=True)
+      (act): Identity()
+    )
+    (unary_shortcut): UnaryBlockPackMode(
+      (mlp): Linear(in_features=512, out_features=1024, bias=True)
+      (norm): GroupNormPackMode(32, 1024, eps=1e-05, affine=True)
+      (act): Identity()
+    )
+    (act): LeakyReLU(negative_slope=0.2)
+  )
+  (encoder4_3): KPResidualBlock(
+    (unary1): UnaryBlockPackMode(
+      (mlp): Linear(in_features=1024, out_features=256, bias=True)
+      (norm): GroupNormPackMode(32, 256, eps=1e-05, affine=True)
+      (act): LeakyReLU(negative_slope=0.2)
+    )
+    (conv): KPConvBlock(
+      (conv): KPConv(kernel_size=15, in_channels=256, out_channels=256, radius=0.8, sigma=0.64, bias=True)
+      (norm): GroupNormPackMode(32, 256, eps=1e-05, affine=True)
+      (act): LeakyReLU(negative_slope=0.2)
+    )
+    (unary2): UnaryBlockPackMode(
+      (mlp): Linear(in_features=256, out_features=1024, bias=True)
+      (norm): GroupNormPackMode(32, 1024, eps=1e-05, affine=True)
+      (act): Identity()
+    )
+    (unary_shortcut): Identity()
+    (act): LeakyReLU(negative_slope=0.2)
+  )
+  (encoder5_1): KPResidualBlock(
+    (unary1): UnaryBlockPackMode(
+      (mlp): Linear(in_features=1024, out_features=256, bias=True)
+      (norm): GroupNormPackMode(32, 256, eps=1e-05, affine=True)
+      (act): LeakyReLU(negative_slope=0.2)
+    )
+    (conv): KPConvBlock(
+      (conv): KPConv(kernel_size=15, in_channels=256, out_channels=256, radius=0.8, sigma=0.64, bias=True)
+      (norm): GroupNormPackMode(32, 256, eps=1e-05, affine=True)
+      (act): LeakyReLU(negative_slope=0.2)
+    )
+    (unary2): UnaryBlockPackMode(
+      (mlp): Linear(in_features=256, out_features=1024, bias=True)
+      (norm): GroupNormPackMode(32, 1024, eps=1e-05, affine=True)
+      (act): Identity()
+    )
+    (unary_shortcut): Identity()
+    (act): LeakyReLU(negative_slope=0.2)
+  )
+  (encoder5_2): KPResidualBlock(
+    (unary1): UnaryBlockPackMode(
+      (mlp): Linear(in_features=1024, out_features=512, bias=True)
+      (norm): GroupNormPackMode(32, 512, eps=1e-05, affine=True)
+      (act): LeakyReLU(negative_slope=0.2)
+    )
+    (conv): KPConvBlock(
+      (conv): KPConv(kernel_size=15, in_channels=512, out_channels=512, radius=1.6, sigma=1.28, bias=True)
+      (norm): GroupNormPackMode(32, 512, eps=1e-05, affine=True)
+      (act): LeakyReLU(negative_slope=0.2)
+    )
+    (unary2): UnaryBlockPackMode(
+      (mlp): Linear(in_features=512, out_features=2048, bias=True)
+      (norm): GroupNormPackMode(32, 2048, eps=1e-05, affine=True)
+      (act): Identity()
+    )
+    (unary_shortcut): UnaryBlockPackMode(
+      (mlp): Linear(in_features=1024, out_features=2048, bias=True)
+      (norm): GroupNormPackMode(32, 2048, eps=1e-05, affine=True)
+      (act): Identity()
+    )
+    (act): LeakyReLU(negative_slope=0.2)
+  )
+  (encoder5_3): KPResidualBlock(
+    (unary1): UnaryBlockPackMode(
+      (mlp): Linear(in_features=2048, out_features=512, bias=True)
+      (norm): GroupNormPackMode(32, 512, eps=1e-05, affine=True)
+      (act): LeakyReLU(negative_slope=0.2)
+    )
+    (conv): KPConvBlock(
+      (conv): KPConv(kernel_size=15, in_channels=512, out_channels=512, radius=1.6, sigma=1.28, bias=True)
+      (norm): GroupNormPackMode(32, 512, eps=1e-05, affine=True)
+      (act): LeakyReLU(negative_slope=0.2)
+    )
+    (unary2): UnaryBlockPackMode(
+      (mlp): Linear(in_features=512, out_features=2048, bias=True)
+      (norm): GroupNormPackMode(32, 2048, eps=1e-05, affine=True)
+      (act): Identity()
+    )
+    (unary_shortcut): Identity()
+    (act): LeakyReLU(negative_slope=0.2)
+  )
+  (decoder4): UnaryBlockPackMode(
+    (mlp): Linear(in_features=3072, out_features=1024, bias=True)
+    (norm): GroupNormPackMode(32, 1024, eps=1e-05, affine=True)
+    (act): LeakyReLU(negative_slope=0.2)
+  )
+  (decoder3): UnaryBlockPackMode(
+    (mlp): Linear(in_features=1536, out_features=512, bias=True)
+    (norm): GroupNormPackMode(32, 512, eps=1e-05, affine=True)
+    (act): LeakyReLU(negative_slope=0.2)
+  )
+  (decoder2): UnaryBlockPackMode(
+    (mlp): Linear(in_features=768, out_features=256, bias=True)
+    (norm): GroupNormPackMode(32, 256, eps=1e-05, affine=True)
+    (act): LeakyReLU(negative_slope=0.2)
+  )
+  (decoder1): UnaryBlockPackMode(
+    (mlp): Linear(in_features=384, out_features=128, bias=True)
+    (norm): GroupNormPackMode(16, 128, eps=1e-05, affine=True)
+    (act): LeakyReLU(negative_slope=0.2)
+  )
+  (classifier): Sequential(
+    (0): Linear(in_features=128, out_features=64, bias=True)
+    (1): GroupNorm(8, 64, eps=1e-05, affine=True)
+    (2): ReLU()
+    (3): Linear(in_features=64, out_features=13, bias=True)
+  )
+)
+2022-06-06 15:53:10 | INFO | epoch: 1/300, iter: 10/3000, loss: 2.217, accuracy: 0.415, precision: 0.162, recall: 0.194, lr: 1.030e-03, time: 0.146s/0.499s
+2022-06-06 15:53:15 | INFO | epoch: 1/300, iter: 20/3000, loss: 1.792, accuracy: 0.584, precision: 0.180, recall: 0.245, lr: 1.060e-03, time: 0.085s/0.502s
+2022-06-06 15:53:20 | INFO | epoch: 1/300, iter: 30/3000, loss: 1.523, accuracy: 0.615, precision: 0.200, recall: 0.254, lr: 1.090e-03, time: 0.066s/0.502s
+2022-06-06 15:53:25 | INFO | epoch: 1/300, iter: 40/3000, loss: 1.481, accuracy: 0.598, precision: 0.240, recall: 0.259, lr: 1.120e-03, time: 0.056s/0.496s
+2022-06-06 15:53:30 | INFO | epoch: 1/300, iter: 50/3000, loss: 1.385, accuracy: 0.609, precision: 0.253, recall: 0.277, lr: 1.150e-03, time: 0.050s/0.496s
+2022-06-06 15:53:36 | INFO | epoch: 1/300, iter: 60/3000, loss: 1.273, accuracy: 0.644, precision: 0.308, recall: 0.292, lr: 1.180e-03, time: 0.046s/0.495s
